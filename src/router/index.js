@@ -1,22 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+import store from '../store'
+import axios from 'axios'
+import Keycloak from 'keycloak-js'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import('../views/Layout.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import('../views/Media.vue')
+      },
+      {
+        path: '/index',
+        component: () => import('../views/Media.vue')
+      },
+      {
+        path: '/mediaEdit',
+        component: () => import('../components/MediaEdit.vue')
+      }
+    ]
   }
 ]
 
@@ -24,4 +30,16 @@ const router = new VueRouter({
   routes
 })
 
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 export default router
+
+
+
+
+
+
+

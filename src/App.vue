@@ -1,32 +1,93 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+  <div id="app" ref="app">
+    <router-view :key="fullWidth"/>
   </div>
 </template>
+<script>
+  import Keycloak from 'keycloak-js'
+  import router from './router'
+  export default {
+    name: 'app',
+    data () {
+      return {
+        fullWidth: document.documentElement.clientWidth
+      }
+    },
+    computed: {
+      clientId () {
+        return this.$store.state.clientId
+      },
+      routerUrl () {
+        return this.$route
+      }
+    },
+    methods: {
+      LoadData () {
+        let token = sessionStorage.getItem('token')
+        if (!token) {
+          this.getKeycloak()
+          console.log(1111)
+        } else {
+          this.getKeycloak()
+          console.log(2222)
+        }
+
+      },
+      getKeycloak () {
+        let keycloaks = null
+        let _this = this
+        keycloaks = Keycloak({
+          url: 'http://u.xlmediawatch.com/auth',
+          realm: 'xlplatform',
+          clientId: _this.clientId,
+        })
+        keycloaks.init({ onLoad: 'login-required' }).success(
+          function (authenticated) {
+            console.log('authenticated====App', authenticated)
+            if (!authenticated) {
+              sessionStorage.clear()
+              keycloaks.logout();
+            } else {
+              keycloaks.loadUserProfile().success(data => {
+                let username = data.firstName + data.lastName
+                sessionStorage.setItem('userName', username)
+                sessionStorage.setItem('token', keycloaks.token)
+                let path = _this.$route.path
+                console.log(_this.$route.path)
+                if (path === '/')
+                router.push({path: '/'})
+              })
+            }
+        }).error(function () {
+            alert('初始化失败')
+        })
+      }
+    },
+    created () {
+      // this.LoadData();
+    },
+    mounted () {
+      const that = this
+      window.onresize = () => {
+        return (() => {
+          that.fullWidth = document.documentElement.clientWidth
+        })()
+      }
+    },
+    updated () {
+    }
+  }
+</script>
 
 <style lang="scss">
-#app {
+*{
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+#app, body, html{
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+  height: 100%;
 }
 </style>
