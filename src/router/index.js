@@ -21,7 +21,11 @@ const routes = [
       {
         path: '/mediaEdit',
         component: () => import('../components/MediaEdit.vue')
-      }
+      },
+      {
+        path: '/emotional',
+        component: () => import('../views/Emotional.vue')
+      },
     ]
   }
 ]

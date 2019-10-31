@@ -9,3 +9,12 @@ export function formatTs (ts, format = 'YYYY-MM-DD HH:mm:ss') {
   }
   return retVal
 }
+export function formatNumber (ts, format = 'YYYY-MM-DD HH:mm:ss') {
+  let retVal = ''
+  if (ts) {
+    let time = moment(ts)
+    retVal = time.valueOf()
+    // debug && console.debug(`${ts} => ${retVal}(${time.format()})`)
+  }
+  return retVal
+}

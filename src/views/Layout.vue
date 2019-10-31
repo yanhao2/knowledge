@@ -18,26 +18,29 @@
                     </svg>
                 </div>
                 <div class="menu">
-                    <ul class="menuUl" v-if="isActive">
-                        <li style="padding-left: 20px" v-for="( item, i ) in routers" :key="i" :class="activeIndex === i ? 'is-active' : ''" @click="onClickRouter(item, i)">
-                            <div class="menuLi">
-                                <i :class="item.icon"></i>
-                                <span class="text">{{item.title}}</span>
-                            </div>
-                        </li>
-                    </ul>
-                    <ul class="menuUl" v-else>
-                        <li style="padding-left: 20px" v-for="( item, i ) in routers" :key="i" :class="activeIndex === i ? 'is-active' : ''" @click="onClickRouter(item, i)">
-                            <el-tooltip class="item" effect="dark" :content="item.title" placement="right">
-                                <div class="menuLi">
-                                    <i :class="item.icon"></i>
-                                </div>
-                            </el-tooltip>
-                        </li>
-                    </ul>
+                  <el-menu
+                    :collapse="!isActive"
+                    :default-active="String($route.path)"
+                    router
+                    class="el-menu-vertical-demo"
+                    @select="handleSelect" v-for="( item, i ) in routers" :key="i">
+                    <el-menu-item :index="String(item.path)" v-if="item.children.length === 0">
+                      <i class="el-icon-menu"></i>
+                      <span slot="title">{{item.title}}</span>
+                    </el-menu-item>
+                    <el-submenu :index="String(item.path)"  v-else v-for="(items, index) in item.children" :key="index">
+                      <template slot="title">
+                        <i class="el-icon-location"></i>
+                        <span>{{item.title}}</span>
+                      </template>
+                      <el-menu-item :index="String(items.path)">
+                        <span style="padding-left: 10px">{{items.title}}</span>
+                      </el-menu-item>
+                    </el-submenu>
+                  </el-menu>
                 </div>
             </el-aside>
-            <HeaderTabBar :style="{'width': isActive ? 'calc(100% - 200px)' : 'calc(100% - 54px)'}"/>
+            <HeaderTabBar :isActive="isActive" :style="{'width': isActive ? 'calc(100% - 200px)' : 'calc(100% - 54px)'}"/>
         </el-container>
     </div>
 </template>
@@ -54,18 +57,35 @@
         userInfo: '',
         isActive: false,
         windows: window.innerWidth,
-        activeIndex: 0,
+        activeIndex: '/',
         routers: [
-          { title: '自媒体', icon: 'el-icon-help', path: '/' },
+          { title: '自媒体', icon: 'el-icon-help', path: '/' , children: []},
+          {
+            title: '词典管理',
+            icon: 'el-icon-help',
+            children: [
+              {
+                title: '情感词库',
+                path: '/emotional',
+                children: []
+              }
+            ]
+          },
         ]
       }
     },
     computed: {
       sidebar () {
         return this.$store.getters.getSideBar
+      },
+      routerUrl () {
+        return this.$route.path
       }
     },
     methods: {
+      handleSelect(key, keyPath) {
+        this.activeIndex = key
+      },
       toggleClick () {
         this.isActive = !this.isActive
         this.$store.commit('ToggleSideBar', this.isActive)
@@ -107,6 +127,8 @@
     .Layout, .el-container{
         width: 100%;
         height: 100%;
+
+
         .el-header {
             background: #fff;
         }
@@ -162,16 +184,37 @@
                         font-size: 14px;
                     }
                 }
+                .children{
+                  .text{
+                    padding-left: 40px;
+                  }
+                }
                 .is-active {
                     background-color: #0077CB;
                 }
                 li{
                     cursor: pointer;
                 }
-                li:hover{
-                    background-color: rgba(251,122,79, .5);
+                .menuLi:hover{
+                    background-color: #0077CB;
                 }
             }
+        }
+        .el-menu-item, .el-menu-item i, .el-submenu__title, .el-submenu__title i{
+          color: #fff;
+        }
+        .el-menu-item:focus, .el-menu-item:hover, .el-submenu__title:hover {
+          background-color: #0077CB;
+        }
+        .el-menu-item.is-active{
+          background-color: #0077CB;
+        }
+
+        .ivu-menu-light{
+          background: #20222a;
+        }
+        .ivu-menu{
+          color: #fff;
         }
         .el-menu--collapse{
             width: 54px;
@@ -186,6 +229,22 @@
         }
         .el-tooltip{
             padding: 0!important;
+        }
+        .el-menu--collapse{
+          .el-submenu__title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .el-menu-item, .el-tooltip {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .el-icon-menu{
+              margin-left: 12px;
+            }
+          }
         }
     }
 </style>

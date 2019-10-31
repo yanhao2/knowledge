@@ -13,15 +13,6 @@ module.exports = {
       chunkFilename: `js/[name].${Time}.js`,
     }
   },
-  pwa: {
-    iconPaths: {
-      favicon32: 'img/icons/logoIcon.jpg',
-      favicon16: 'img/icons/logoIcon.jpg',
-      appleTouchIcon: 'img/icons/logoIcon.jpg',
-      maskIcon: 'img/icons/logoIcon.jpg',
-      msTileImage: 'img/icons/logoIcon.jpg'
-    }
-  },
   devServer: {
     host: "0.0.0.0",
     port: 8080,

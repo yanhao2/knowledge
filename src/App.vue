@@ -1,6 +1,6 @@
 <template>
   <div id="app" ref="app">
-    <router-view :key="fullWidth"/>
+    <router-view/>
   </div>
 </template>
 <script>
@@ -10,7 +10,6 @@
     name: 'app',
     data () {
       return {
-        fullWidth: document.documentElement.clientWidth
       }
     },
     computed: {
@@ -67,12 +66,7 @@
       // this.LoadData();
     },
     mounted () {
-      const that = this
-      window.onresize = () => {
-        return (() => {
-          that.fullWidth = document.documentElement.clientWidth
-        })()
-      }
+
     },
     updated () {
     }
@@ -81,7 +75,7 @@
 
 <style lang="scss">
 *{
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-family: PingFang SC,Lantinghei SC,Lucida Grande,Microsoft YaHei,FreeSans,WenQuanYi Micro Hei,Hiragino Sans GB,Hiragino Sans GB W3,SimSun,sans-serif,tahoma,arial
 }
 #app, body, html{
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

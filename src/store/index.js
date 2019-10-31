@@ -7,7 +7,7 @@ export default new Vuex.Store({
       opened: false
     },
     urlApi: 'http://60.247.62.110:10040',
-    clientId:process.env.NODE_ENV === 'development' ? 'manager_yanhao' : 'manager_online_yanhao',
+    clientId:process.env.NODE_ENV === 'development' ? 'manager_new_yaohao' : 'manager_online_yanhao',
     userName: null,
     token: null,
     sidebarStatus: null,

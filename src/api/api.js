@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '../store'
-const token = sessionStorage.getItem('token')
+import Cookies from "js-cookie"
+const token = Cookies.get("permission");
 axios.defaults.timeout = 60000 // timeout in 10 seconds.
 axios.defaults.baseURL = store.state.urlApi
 
@@ -12,11 +13,13 @@ export default {
           method: method,
           url: uri,
           data: data,
-          params: method === 'POST' ? '' : data,
+          params: method === 'POST'  || method === 'PUT'  ? '' : data,
           headers: headers
         })
           .then(response => {
-            resolve(response.data)
+            if (response.status === 200) {
+              resolve(response.data)
+            }
           })
           .catch((error) => {
             console.error(error)
@@ -48,15 +51,15 @@ export default {
   },
   // 获取自媒体行业字典接口
   MediaIndustryList (data) {
-    return this.headersFun('GET', `/manager/getIndustryListByPid/${data}`)
+    return this.headersFun('POST', `/manager/addOrUpdateDictData`, data)
   },
   // 获取地域字典接口
   MediaAreaList (data) {
     return this.headersFun('GET', `/manager/getRegionListByPid/${data}`)
   },
-  // 获取地域字典接口
+  // 获取标签字典接口
   MediaLabelList (data) {
-    return this.headersFun('GET', `/manager/labelListByPid/${data}`)
+    return this.headersFun('POST', `/manager/addOrUpdateDictData`, data)
   },
   // 获取自媒体号、自媒体联盟字典接口
   MediaNumberList (data) {
@@ -78,5 +81,28 @@ export default {
   MediaDeteleList (data) {
     return this.headersFun('POST', `/manager/deleteCommonEsData`, data)
   },
-
+  // 认证类型
+  MediaAuthenticationTypeList (data) {
+    return this.headersFun('POST', `/manager/addOrUpdateDictData`, data)
+  },
+  // 批量审核
+  MediaReviewList (data) {
+    return this.headersFun('POST', `/manager/stateCommonEsData`, data)
+  },
+  // 操作日志
+  MediaOperationLogList (data) {
+    return this.headersFun('GET', `/manager/operLogDataByCode`, data)
+  },
+  // 情感词列表
+  EmotionalList (data) {
+    return this.headersFun('GET', `/RwNlpAffective`, data)
+  },
+  // 添加情感词
+  EmotionalAdd (data) {
+    return this.headersFun('POST', `/RwNlpAffective`, data)
+  },
+  // 编辑情感词
+  EmotionalEdit (data) {
+    return this.headersFun('PUT', `/RwNlpAffective/${data.id}`, data)
+  }
 }
